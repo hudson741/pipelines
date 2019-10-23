@@ -230,6 +230,7 @@ func (r *ResourceManager) CreateRun(apiRun *api.Run) (*model.RunDetail, error) {
 	workflow.OverrideParameters(parameters)
 	// Add label to the workflow so it can be persisted by persistent agent later.
 	workflow.SetLabels(util.LabelKeyWorkflowRunId, runId)
+	workflow.SetLabels(util.LabelKeyDebugModle, apiRun.Debug)
 	// Replace {{workflow.uid}} with runId
 	err = workflow.ReplaceUID(runId)
 	if err != nil {
@@ -437,6 +438,8 @@ func (r *ResourceManager) CreateJob(apiJob *api.Job) (*model.Job, error) {
 
 	// Set workflow to be run using default pipeline runner service account.
 	workflow.SetServiceAccount(r.getDefaultSA())
+
+	workflow.SetLabels(util.LabelKeyDebugModle, apiJob.Debug)
 
 	scheduledWorkflow := &scheduledworkflow.ScheduledWorkflow{
 		ObjectMeta: v1.ObjectMeta{GenerateName: swfGeneratedName},
@@ -654,7 +657,7 @@ func (r *ResourceManager) checkJobExist(jobID string) (*model.Job, error) {
 func (r *ResourceManager) checkRunExist(runID string) (*model.RunDetail, error) {
 	runDetail, err := r.runStore.GetRun(runID)
 	if err != nil {
-		return nil, util.Wrap(err, "Check run exist failed")
+		return nil, util.Wrap(err, "Check ru`n exist failed")
 	}
 	return runDetail, nil
 }

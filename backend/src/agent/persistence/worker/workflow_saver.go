@@ -28,15 +28,19 @@ type WorkflowSaver struct {
 	pipelineClient                client.PipelineClientInterface
 	metricsReporter               *MetricsReporter
 	ttlSecondsAfterWorkflowFinish int64
+	ttlSecondsAfterWorkflowFinishDebugModle  int64
 }
 
 func NewWorkflowSaver(client client.WorkflowClientInterface,
-		pipelineClient client.PipelineClientInterface, ttlSecondsAfterWorkflowFinish int64) *WorkflowSaver {
+		pipelineClient client.PipelineClientInterface,
+		ttlSecondsAfterWorkflowFinish int64,
+	    ttlSecondsAfterWorkflowFinishDebugModle int64) *WorkflowSaver {
 	return &WorkflowSaver{
 		client:                        client,
 		pipelineClient:                pipelineClient,
 		metricsReporter:               NewMetricsReporter(pipelineClient),
 		ttlSecondsAfterWorkflowFinish: ttlSecondsAfterWorkflowFinish,
+		ttlSecondsAfterWorkflowFinishDebugModle: ttlSecondsAfterWorkflowFinishDebugModle,
 	}
 }
 
@@ -56,12 +60,27 @@ func (s *WorkflowSaver) Save(key string, namespace string, name string, nowEpoch
 			"Workflow (%s): transient failure: %v", key, err)
 
 	}
-	if wf.PersistedFinalState() && time.Now().Unix()-wf.FinishedAt() < s.ttlSecondsAfterWorkflowFinish {
-		// Skip persisting the workflow if the workflow is finished
-		// and the workflow hasn't being passing the TTL
-		log.Infof("Skip syncing Workflow (%v): workflow marked as persisted.", name)
-		return nil
+
+	if wf.PersistedFinalState(){
+		if wf.IsInDebugMode() || wf.IsFailedState(){
+			if 	time.Now().Unix() - wf.FinishedAt() < s.ttlSecondsAfterWorkflowFinishDebugModle{
+				log.Infof("Skip syncing  DEBUG or FAILED Workflow (%v): workflow marked as persisted.", name)
+				return nil
+			}
+
+		}else if time.Now().Unix()-wf.FinishedAt() < s.ttlSecondsAfterWorkflowFinish{
+			log.Infof("Skip syncing Workflow (%v): workflow marked as persisted.", name)
+			return nil
+		}
+
 	}
+
+	//if wf.PersistedFinalState() && time.Now().Unix()-wf.FinishedAt() < s.ttlSecondsAfterWorkflowFinish {
+	//	// Skip persisting the workflow if the workflow is finished
+	//	// and the workflow hasn't being passing the TTL
+	//	log.Infof("Skip syncing Workflow (%v): workflow marked as persisted.", name)
+	//	return nil
+	//}
 	// Save this Workflow to the database.
 	err = s.pipelineClient.ReportWorkflow(wf)
 	retry := util.HasCustomCode(err, util.CUSTOM_CODE_TRANSIENT)

@@ -247,7 +247,16 @@ func (w *Workflow) FindObjectStoreArtifactKeyOrEmpty(nodeID string, artifactName
 
 // IsInFinalState whether the workflow is in a final state.
 func (w *Workflow) IsInFinalState() bool {
-	if w.Status.Phase == workflowapi.NodeSucceeded || w.Status.Phase == workflowapi.NodeFailed {
+	if w.Status.Phase == workflowapi.NodeSucceeded ||
+		w.Status.Phase == workflowapi.NodeFailed ||
+	    w.Status.Phase == workflowapi.NodeError{
+		return true
+	}
+	return false
+}
+
+func (w *Workflow) IsFailedState() bool {
+	if w.Status.Phase == workflowapi.NodeFailed || w.Status.Phase == workflowapi.NodeError {
 		return true
 	}
 	return false
@@ -260,4 +269,11 @@ func (w *Workflow) PersistedFinalState() bool {
 		return true
 	}
 	return false
+}
+
+func (w *Workflow) IsInDebugMode() bool {
+	if v,ok :=w.GetLabels()[LabelKeyDebugModle]; ok && (v== "1" || v =="true"){
+		return true
+	}
+	return false;
 }

@@ -43,4 +43,6 @@ const (
 
 	LabelKeyWorkflowRunId = "pipeline/runid"
 	LabelKeyWorkflowPersistedFinalState = "pipeline/persistedFinalState"
+	//workflow 的debug模式, debug模式下，无论workflow执行结果如何。失效时间会延长，
+	LabelKeyDebugModle = "arsenal/debug"
 )

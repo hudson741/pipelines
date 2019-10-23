@@ -42,6 +42,7 @@ var (
 	mlPipelineServiceGRPCPort     string
 	namespace                     string
 	ttlSecondsAfterWorkflowFinish int64
+	ttlSecondsAfterWorkflowFinishDebugModle  int64
 )
 
 const (
@@ -55,6 +56,7 @@ const (
 	mlPipelineAPIServerGRPCPortFlagName   = "mlPipelineServiceGRPCPort"
 	namespaceFlagName                     = "namespace"
 	ttlSecondsAfterWorkflowFinishFlagName = "ttlSecondsAfterWorkflowFinish"
+	ttlSecondsAfterWorkflowFinishDebugModleFlagName = "ttlSecondsAfterWorkflowFinishDebugModle"
 )
 
 func main() {
@@ -124,5 +126,6 @@ func init() {
 	flag.StringVar(&mlPipelineAPIServerBasePath, mlPipelineAPIServerBasePathFlagName,
 		"/apis/v1beta1", "The base path for the ML pipeline API server.")
 	flag.StringVar(&namespace, namespaceFlagName, "", "The namespace name used for Kubernetes informers to obtain the listers.")
-	flag.Int64Var(&ttlSecondsAfterWorkflowFinish, ttlSecondsAfterWorkflowFinishFlagName, 604800 /* 7 days */, "The TTL for Argo workflow to persist after workflow finish.")
+	flag.Int64Var(&ttlSecondsAfterWorkflowFinish, ttlSecondsAfterWorkflowFinishFlagName, 900 /* 900s */, "The TTL for Argo workflow to persist after workflow finish.")
+	flag.Int64Var(&ttlSecondsAfterWorkflowFinishDebugModle, ttlSecondsAfterWorkflowFinishDebugModleFlagName, 259200 /* 3 days */, "The TTL for Argo workflow to persist after workflow finish.")
 }

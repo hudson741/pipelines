@@ -2,6 +2,12 @@
 [![Coverage Status](https://coveralls.io/repos/github/kubeflow/pipelines/badge.svg?branch=master)](https://coveralls.io/github/kubeflow/pipelines?branch=master)
 SDK: [![Documentation Status](https://readthedocs.org/projects/kubeflow-pipelines/badge/?version=latest)](https://kubeflow-pipelines.readthedocs.io/en/latest/?badge=latest)
 
+## Arsenal二次开发变更记录
+
+* Arsenal二期：支持全局debug功能 
+修改pipeline对workflow回收策略逻辑，创建run时，根据参数debug，判定是否对这个run进行全局debug。debug为true时，workflow运行完成后无论结果如何，都将延迟ttlSecondsAfterWorkflowFinishDebugModle时间再进行回收操作，默认为3天。debug为false时，要判定workflow的运行结果，运行结果为success，则延迟ttlSecondsAfterWorkflowFinish时间进行回收操作，默认为15分钟。如果运行结果为failed或error，则效果等同debug=true。
+
+
 ## Overview of the Kubeflow pipelines service
 
 [Kubeflow](https://www.kubeflow.org/) is a machine learning (ML) toolkit that is dedicated to making deployments of ML workflows on Kubernetes simple, portable, and scalable. 

@@ -232,6 +232,8 @@ message Job {
   // how to handle error. This is especially useful during listing call.
   string error = 12;
 
+  string debug = 13;
+
   // Input. Whether the job is enabled or not.
   bool enabled = 16;
 }

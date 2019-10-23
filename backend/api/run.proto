@@ -186,6 +186,8 @@ message Run {
   // or auto generated if run is created by scheduled job. Not unique.
   string name = 2;
 
+  string debug = 14;
+
   enum StorageState {
     STORAGESTATE_AVAILABLE = 0;
     STORAGESTATE_ARCHIVED = 1;
